@@ -13,3 +13,5 @@ Please visit our webside!
 TRAINING_DONE = "Your training done. You are the best!)"
 
 WRONG_ANSWER = "False answer, try again"
+
+START_TRAIN_MESSAGE = "Choose the language"

@@ -1,7 +1,7 @@
 import json
 from tokenize import String
 import aiohttp
-from .local_settings import WORDS_API_URL_RANDOM, WORDS_API_URL_ANSWER
+from .local_settings import WORDS_API_URL_RANDOM, WORDS_API_URL_ANSWER, WORDS_API_URL_ANSWERS
 
 
 async def get_random(telegram_id: String):
@@ -12,4 +12,9 @@ async def get_random(telegram_id: String):
 async def put_answer(data):
     async with aiohttp.ClientSession() as session:
         async with session.patch(WORDS_API_URL_ANSWER, json=data):
+            pass
+
+async def put_answers(data):
+    async with aiohttp.ClientSession() as session:
+        async with session.put(WORDS_API_URL_ANSWERS, json=data):
             pass

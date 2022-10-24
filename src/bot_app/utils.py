@@ -17,7 +17,14 @@ def prepare_dict(dct: dict, choose_str: str) -> dict:
         return dict(word=dct.get('word'), translate_list=get_all_translate(word_detail_list), example=random_word_detail_exaple, stat_id=random_word_detail_pk, all_pk=get_all_pk(word_detail_list), all_msg=word_detail_list)
     else:
         return dict(word=get_all_translate(word_detail_list), translate_list=[dct.get('word')], example=random_word_detail_exaple, stat_id=random_word_detail_pk, all_pk=get_all_pk(word_detail_list), all_msg=word_detail_list)
-        
+
+def prepare_list_dict(lst: list, answer: str) -> list:
+    result = []
+    for l in lst:
+        my_dict = {"pk": l, "answer": answer}
+        result.append(my_dict)
+    return result
+
 def find_answer(messages: list, answer: str):
     for message in messages:
         if answer == message.get('translate'):

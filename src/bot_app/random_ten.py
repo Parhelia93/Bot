@@ -2,11 +2,11 @@ from aiogram import types
 from bot_app.states import GameStates
 from .app import dp, bot
 from .keyboards import inline_kb
-from .data_fetcher import get_random, put_answer
+from .data_fetcher import get_random, put_answer, put_answers
 from aiogram.dispatcher import FSMContext
 from .messages import EMPTY_DICTIONARY_EMPTYING, TRAINING_DONE, WRONG_ANSWER, START_TRAIN_MESSAGE
 from .local_settings import CNT_TRAINT_STEP
-from .utils import prepare_dict, find_answer
+from .utils import prepare_dict, find_answer, prepare_list_dict
 import random
 
 
@@ -43,8 +43,12 @@ async def answer_handler(message: types.Message, state: FSMContext):
                 true_pk = find_answer(data.get('all_message'), message.text)
                 await put_answer({'pk': true_pk, 'answer': 'True'})
             else:
-                for pk in data['all_pk']:
-                    await put_answer({'pk': pk, 'answer': 'True'})
+                # for pk in data['all_pk']:
+                #     await put_answer({'pk': pk, 'answer': 'True'})
+                # prepare_list_dict
+                pks = [pk for pk in data['all_pk']]
+                res = prepare_list_dict(pks,'True')
+                await put_answers(res)
 
             if data['step'] > CNT_TRAINT_STEP:
                 await state.finish()
@@ -60,5 +64,8 @@ async def answer_handler(message: types.Message, state: FSMContext):
                 await message.answer(f"Step: {data['step']}, Как переводится: {word}")
         else:
             await message.answer(WRONG_ANSWER)
-            for pk in data['all_pk']:
-                await put_answer({'pk': pk, 'answer': 'False'})
+            # for pk in data['all_pk']:
+            #     await put_answer({'pk': pk, 'answer': 'False'})
+            pks = [pk for pk in data['all_pk']]
+            res = prepare_list_dict(pks,'False')
+            await put_answers(res)

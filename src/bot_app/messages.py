@@ -15,3 +15,5 @@ TRAINING_DONE = "Your training done. You are the best!)"
 WRONG_ANSWER = "False answer, try again"
 
 START_TRAIN_MESSAGE = "Choose the language"
+
+EN_RUS, RUS_EN = 'En-Rus', 'Rus-En'

@@ -10,7 +10,12 @@ from .utils import prepare_dict, find_answer, prepare_list_dict
 import random
 
 
-@dp.message_handler(commands='train_ten', state="*")
+@dp.message_handler(commands='end', state=GameStates.random_ten)
+async def end_training(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer(TRAINING_DONE)
+
+@dp.message_handler(commands='train', state="*")
 async def train_ten(message: types.Message, state: FSMContext):
     await GameStates.random_ten.set()
     await message.answer(START_TRAIN_MESSAGE, reply_markup=inline_kb)
@@ -18,6 +23,7 @@ async def train_ten(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data in ['En-Rus', 'Rus-En'], state=GameStates.random_ten)
 async def language_choose_call_back(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
+    await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
     answer = callback_query.data
     res = await get_random(callback_query.from_user.id)
     async with state.proxy() as data:
@@ -33,19 +39,29 @@ async def language_choose_call_back(callback_query: types.CallbackQuery, state: 
             word = random.choice(data['word'])
             await bot.send_message(callback_query.from_user.id, f"Step: {data['step']}, Как переводится: {word}")
 
-@dp.message_handler(lambda message: message.text not in ["/start", "/help", "/asd"], state=GameStates.random_ten)
+@dp.message_handler(lambda message: message.text not in ["/start", "/help", "/end"], state=GameStates.random_ten)
 async def answer_handler(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        if message.text.lower() in data.get('translate') and data['choose_language'] == 'En-Rus' or data['choose_language'] == 'Rus-En' and message.text.lower() in data.get('translate'):
-            # await message.answer(f"Step: {data.get('translate')}")
+        if message.text.lower() in data.get('translate') and data['choose_language'] == 'En-Rus' or data['choose_language'] == 'Rus-En' and message.text.lower() in data.get('translate') or message.text.lower() in ['хз', 'Хз']:
             data['step']+=1
+
+            if message.text.lower() in ['хз', 'Хз']:
+                pks = [pk for pk in data['all_pk']]
+                res = prepare_list_dict(pks,'False')
+                await put_answers(res)
+                res = await get_random(message.from_user.id)
+                result = prepare_dict(res, data['choose_language'])
+                data.update(word=result.get('word'), translate=result.get('translate_list'), example=result.get('example'), stat_id=result.get('stat_id'), telegram_id=str(message.from_user.id), all_pk=result.get('all_pk'), all_message=result.get('all_msg'))
+                if data['choose_language'] == 'En-Rus':
+                    return await message.answer(f"Step: {data['step']}, Как переводится: {data['word']}")
+                else:
+                    word = random.choice(data['word'])
+                    return await message.answer(f"Step: {data['step']}, Как переводится: {word}")
+
             if data['choose_language'] == 'En-Rus':
                 true_pk = find_answer(data.get('all_message'), message.text)
                 await put_answer({'pk': true_pk, 'answer': 'True'})
             else:
-                # for pk in data['all_pk']:
-                #     await put_answer({'pk': pk, 'answer': 'True'})
-                # prepare_list_dict
                 pks = [pk for pk in data['all_pk']]
                 res = prepare_list_dict(pks,'True')
                 await put_answers(res)
@@ -64,8 +80,6 @@ async def answer_handler(message: types.Message, state: FSMContext):
                 await message.answer(f"Step: {data['step']}, Как переводится: {word}")
         else:
             await message.answer(WRONG_ANSWER)
-            # for pk in data['all_pk']:
-            #     await put_answer({'pk': pk, 'answer': 'False'})
             pks = [pk for pk in data['all_pk']]
             res = prepare_list_dict(pks,'False')
             await put_answers(res)

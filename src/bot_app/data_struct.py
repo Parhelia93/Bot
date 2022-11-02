@@ -14,6 +14,20 @@ struct random word from server
 }
 """
 
-# class RandomWord:
-#     def __init__(self) -> None:
-#         pass
+
+@dataclass
+class ServerRandomWord:
+    word: str
+    translate: list[str]
+    example: str
+    all_pk: list[int]
+    all_answer: list[str]
+    choose_language: str
+    step: int
+    telegram_id: str
+
+
+@dataclass
+class CheckAnswer:
+    server_word: ServerRandomWord
+    status: str

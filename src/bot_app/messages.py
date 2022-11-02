@@ -17,3 +17,9 @@ WRONG_ANSWER = "False answer, try again"
 START_TRAIN_MESSAGE = "Choose the language"
 
 EN_RUS, RUS_EN = 'En-Rus', 'Rus-En'
+
+DONT_KNOW_CMD = ['хз', 'не знаю', 'пропустить']
+
+NEW_MESSAGE = 'GET_NEW_MESSAGE'
+
+FINISH = 'FINISH'

@@ -43,6 +43,9 @@ def find_answer(messages: list, answer: str):
             return message.get('word_stat').get('pk')
 
 
+def construct_list_str(lst: list) -> str:
+    return ';\n'.join(lst)
+
 """
 struct random word from server
 {
@@ -68,7 +71,7 @@ def prepare_server_word(dct: dict, choose_str: str, step: int, telegram_id: str)
     if choose_str == messages.EN_RUS:
         server_word = data_struct.ServerRandomWord(word=word,
                                                    translate=answer,
-                                                   example=example[0],
+                                                   example=construct_list_str(example),
                                                    all_pk=pk_list,
                                                    all_answer=answer,
                                                    choose_language=choose_str,

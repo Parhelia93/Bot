@@ -18,8 +18,11 @@ async def check_user_answer(user_answer: str, server_word: ServerRandomWord) -> 
     if user_answer in DONT_KNOW_CMD:
         res = prepare_list_dict(server_word.all_pk, 'False')
         await put_answers(res)
+        server_word.step += 1
+        check_answer = CheckAnswer(server_word=server_word,
+                                   status=DONT_KNOW_MSG)
 
-    if user_answer in server_word.translate or user_answer in DONT_KNOW_CMD:
+    if user_answer in server_word.translate:
         server_word.step += 1
         check_answer = CheckAnswer(server_word=server_word,
                                    status=NEW_MESSAGE)

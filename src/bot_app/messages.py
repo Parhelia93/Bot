@@ -23,3 +23,5 @@ DONT_KNOW_CMD = ['хз', 'не знаю', 'пропустить']
 NEW_MESSAGE = 'GET_NEW_MESSAGE'
 
 FINISH = 'FINISH'
+
+DONT_KNOW_MSG = 'DONT_KNOW_MSG'

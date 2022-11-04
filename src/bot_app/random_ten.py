@@ -2,14 +2,12 @@ from aiogram import types
 from .states import GameStates
 from .app import dp, bot
 from .keyboards import inline_kb, show_example_kb
-from .data_fetcher import get_random, put_answer, put_answers
+from .data_fetcher import get_random
 from aiogram.dispatcher import FSMContext
-from .messages import EMPTY_DICTIONARY_EMPTYING, TRAINING_DONE, WRONG_ANSWER, START_TRAIN_MESSAGE, RUS_EN, EN_RUS, \
-    DONT_KNOW_CMD, NEW_MESSAGE, FINISH, DONT_KNOW_MSG
+from .messages import *
 from .local_settings import CNT_TRAINT_STEP
-from .utils import prepare_dict, find_answer, prepare_list_dict, prepare_server_word, construct_list_str
-import random
-from .data_struct import ServerRandomWord, CheckAnswer
+from .utils import prepare_server_word, construct_list_str
+from .data_struct import ServerRandomWord
 from .game_play import check_user_answer
 
 
@@ -58,13 +56,13 @@ async def answer_handler(message: types.Message, state: FSMContext):
         user_answer = message.text.lower()
         checked_answer = await check_user_answer(user_answer=user_answer, server_word=server_word)
 
-        if checked_answer.status == FINISH:
-            await state.finish()
-            return await message.answer(TRAINING_DONE, reply_markup=types.ReplyKeyboardRemove())
-
         if checked_answer.status == DONT_KNOW_MSG:
             await message.answer(f'Translate: {construct_list_str(checked_answer.server_word.translate)}',
                                  reply_markup=show_example_kb)
+
+        if checked_answer.server_word.step > CNT_TRAINT_STEP:
+            await state.finish()
+            return await message.answer(TRAINING_DONE, reply_markup=types.ReplyKeyboardRemove())
 
         if checked_answer.status == NEW_MESSAGE or checked_answer.status == DONT_KNOW_MSG:
             res = await get_random(message.from_user.id)
@@ -72,12 +70,14 @@ async def answer_handler(message: types.Message, state: FSMContext):
                                               checked_answer.server_word.step,
                                               message.from_user.id)
             data.update(server_word=server_word)
-            return await message.answer(f"Step: {data['server_word'].step}, "
-                                        f"How to translate the word: {data['server_word'].word}",
-                                        reply_markup=show_example_kb)
+            await message.answer(f"Step: {data['server_word'].step}, "
+                                 f"How to translate the word: {data['server_word'].word}",
+                                 reply_markup=show_example_kb)
 
         if checked_answer.status == WRONG_ANSWER:
-            return await message.answer(f"Step: {data['server_word'].step}, {WRONG_ANSWER}")
+            await message.answer(f"Step: {data['server_word'].step}, {WRONG_ANSWER}")
+
+
 
 
 

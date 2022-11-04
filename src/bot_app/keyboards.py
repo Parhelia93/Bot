@@ -1,4 +1,3 @@
-from aiogram import types
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 
 inline_button_def = InlineKeyboardButton('En-Rus', callback_data='En-Rus')

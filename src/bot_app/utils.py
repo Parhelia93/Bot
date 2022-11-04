@@ -46,20 +46,6 @@ def find_answer(messages: list, answer: str):
 def construct_list_str(lst: list) -> str:
     return ';\n'.join(lst)
 
-"""
-struct random word from server
-{
-    'word': 'word',
-    'word_detail': [
-        {
-            'translate': 'translate',
-            'example': 'example',
-            'word_stat': {'pk': 7}
-        }
-    ]
-}
-"""
-
 
 def prepare_server_word(dct: dict, choose_str: str, step: int, telegram_id: str) -> data_struct.ServerRandomWord:
     word: str = dct.get('word')

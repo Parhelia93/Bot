@@ -1,6 +1,5 @@
 from .data_struct import ServerRandomWord, CheckAnswer
 from .messages import *
-from .local_settings import CNT_TRAINT_STEP
 from .data_fetcher import put_answer, put_answers
 from .utils import prepare_list_dict
 
@@ -33,8 +32,5 @@ async def check_user_answer(user_answer: str, server_word: ServerRandomWord) -> 
         check_answer = CheckAnswer(server_word=server_word,
                                    status=WRONG_ANSWER)
 
-    if server_word.step > CNT_TRAINT_STEP:
-        check_answer = CheckAnswer(server_word=server_word,
-                                   status=FINISH)
     return check_answer
 

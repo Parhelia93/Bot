@@ -47,32 +47,39 @@ def construct_list_str(lst: list) -> str:
     return ';\n'.join(lst)
 
 
-def prepare_server_word(dct: dict, choose_str: str, step: int, telegram_id: str) -> data_struct.ServerRandomWord:
-    word: str = dct.get('word')
-    word_detail = dct.get('words_detail')
+def prepare_server_word(dct_list: list,
+                        choose_str: str,
+                        step: int,
+                        telegram_id: str) -> list[data_struct.ServerRandomWord]:
+    server_word_list = []
+    for dct in dct_list:
+        word: str = dct.get('word')
+        word_detail = dct.get('words_detail')
 
-    answer: list = [word_detail.get('translate') for word_detail in word_detail]
-    example: list = [word_detail.get('example') for word_detail in word_detail]
-    pk_list: list = [word_detail.get('word_stat').get('pk') for word_detail in word_detail]
-    if choose_str == messages.EN_RUS:
-        server_word = data_struct.ServerRandomWord(word=word,
-                                                   translate=answer,
-                                                   example=construct_list_str(example),
-                                                   all_pk=pk_list,
-                                                   all_answer=answer,
-                                                   choose_language=choose_str,
-                                                   step=step,
-                                                   telegram_id=telegram_id)
-    else:
-        random_index = random.randrange(0, len(answer), 1)
-        server_word = data_struct.ServerRandomWord(word=answer[random_index],
-                                                   translate=[word],
-                                                   example=example[random_index],
-                                                   all_pk=pk_list,
-                                                   all_answer=answer,
-                                                   choose_language=choose_str,
-                                                   step=step,
-                                                   telegram_id=telegram_id)
-    return server_word
+        answer: list = [word_detail.get('translate') for word_detail in word_detail]
+        example: list = [word_detail.get('example') for word_detail in word_detail]
+        pk_list: list = [word_detail.get('word_stat') for word_detail in word_detail]
+        # .get('pk')
+        if choose_str == messages.EN_RUS:
+            server_word = data_struct.ServerRandomWord(word=word,
+                                                       translate=answer,
+                                                       example=construct_list_str(example),
+                                                       all_pk=pk_list,
+                                                       all_answer=answer,
+                                                       choose_language=choose_str,
+                                                       step=step,
+                                                       telegram_id=telegram_id)
+        else:
+            random_index = random.randrange(0, len(answer), 1)
+            server_word = data_struct.ServerRandomWord(word=answer[random_index],
+                                                       translate=[word],
+                                                       example=example[random_index],
+                                                       all_pk=pk_list,
+                                                       all_answer=answer,
+                                                       choose_language=choose_str,
+                                                       step=step,
+                                                       telegram_id=telegram_id)
+        server_word_list.append(server_word)
+    return server_word_list
 
 

@@ -56,7 +56,7 @@ async def answer_handler(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         server_word: ServerRandomWord = data.get('server_word')[data['step']]
         server_word.step = data['step']
-        user_answer = message.text.lower()
+        user_answer = message.text.lower().strip()
         checked_answer = await check_user_answer(user_answer=user_answer, server_word=server_word)
 
         if checked_answer.status == DONT_KNOW_MSG:
@@ -68,12 +68,14 @@ async def answer_handler(message: types.Message, state: FSMContext):
             return await message.answer(TRAINING_DONE, reply_markup=types.ReplyKeyboardRemove())
 
         if checked_answer.status == NEW_MESSAGE or checked_answer.status == DONT_KNOW_MSG:
-            res: list = await get_random(message.from_user.id)
-            server_word: list = prepare_server_word(res, checked_answer.server_word.choose_language,
-                                                    checked_answer.server_word.step,
-                                                    message.from_user.id)
-            data.update(server_word=server_word, step=server_word[data['step']].step)
-            await message.answer(f"Step: {data['server_word'][data['step']].step}, "
+            # res: list = await get_random(message.from_user.id)
+            # await message.answer(res)
+            # server_word: list = prepare_server_word(res, checked_answer.server_word.choose_language,
+            #                                         checked_answer.server_word.step,
+            #                                         message.from_user.id)
+            # data.update(server_word=server_word, step=server_word[data['step']].step)
+            data.update(step=checked_answer.server_word.step)
+            await message.answer(f"Step: {data['step']}, "
                                  f"How to translate the word: {data['server_word'][data['step']].word}",
                                  reply_markup=show_example_kb)
 

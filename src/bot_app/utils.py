@@ -54,11 +54,11 @@ def prepare_server_word(dct_list: list,
     server_word_list = []
     for dct in dct_list:
         word: str = dct.get('word')
-        word_detail = dct.get('words_detail')
+        word_details = dct.get('words_detail')
 
-        answer: list = [word_detail.get('translate') for word_detail in word_detail]
-        example: list = [word_detail.get('example') for word_detail in word_detail]
-        pk_list: list = [word_detail.get('word_stat') for word_detail in word_detail]
+        answer: list = [word_detail.get('translate') for word_detail in word_details]
+        example: list = [word_detail.get('example') for word_detail in word_details]
+        pk_list: list = [word_detail.get('word_stat') for word_detail in word_details]
         # .get('pk')
         if choose_str == messages.EN_RUS:
             server_word = data_struct.ServerRandomWord(word=word,
